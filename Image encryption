@@ -1,0 +1,71 @@
+from PIL import Image
+import numpy as np
+
+# Function to apply encryption to an image
+def encrypt_image(input_image_path, output_image_path, shift_value):
+    """
+    Encrypt the input image by shifting pixel values.
+    
+    :param input_image_path: Path to the input image.
+    :param output_image_path: Path to save the encrypted image.
+    :param shift_value: Value to shift pixel RGB values for encryption.
+    """
+    # Open the image
+    img = Image.open(input_image_path)
+    # Convert the image to RGB (if it's not in RGB mode)
+    img = img.convert('RGB')
+
+    # Convert image to numpy array (for pixel manipulation)
+    img_array = np.array(img)
+
+    # Perform pixel manipulation (adding the shift value)
+    encrypted_array = img_array + shift_value
+    # Ensure values stay within valid range [0, 255]
+    encrypted_array = np.clip(encrypted_array, 0, 255)
+
+    # Convert the encrypted array back to an image
+    encrypted_img = Image.fromarray(encrypted_array.astype(np.uint8))
+
+    # Save the encrypted image
+    encrypted_img.save(output_image_path)
+    print(f"Encrypted image saved as: {output_image_path}")
+
+# Function to decrypt an image
+def decrypt_image(input_image_path, output_image_path, shift_value):
+    """
+    Decrypt the input image by reversing the encryption process.
+    
+    :param input_image_path: Path to the encrypted image.
+    :param output_image_path: Path to save the decrypted image.
+    :param shift_value: Value to shift pixel RGB values for decryption.
+    """
+    # Open the encrypted image
+    img = Image.open(input_image_path)
+    # Convert the image to RGB (if it's not in RGB mode)
+    img = img.convert('RGB')
+
+    # Convert image to numpy array (for pixel manipulation)
+    img_array = np.array(img)
+
+    # Perform pixel manipulation (subtracting the shift value)
+    decrypted_array = img_array - shift_value
+    # Ensure values stay within valid range [0, 255]
+    decrypted_array = np.clip(decrypted_array, 0, 255)
+
+    # Convert the decrypted array back to an image
+    decrypted_img = Image.fromarray(decrypted_array.astype(np.uint8))
+
+    # Save the decrypted image
+    decrypted_img.save(output_image_path)
+    print(f"Decrypted image saved as: {output_image_path}")
+
+# Example usage
+if __name__ == "__main__":
+    # Define the shift value for encryption/decryption
+    shift_value = 50  # You can change this to any integer
+
+    # Encrypt the image
+    encrypt_image("input_image.jpg", "encrypted_image.jpg", shift_value)
+
+    # Decrypt the image (using the same shift value)
+    decrypt_image("encrypted_image.jpg", "decrypted_image.jpg", shift_value)
